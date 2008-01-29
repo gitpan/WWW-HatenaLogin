@@ -1,4 +1,9 @@
 Revision history for Perl extension WWW::HatenaLogin
 
+0.02	
+        - add login_uri and logout_uri method
+        - add username accessor
+        - WWW::HatenaDiary friendry
+
 0.01    2008-01-29T22:28:09+09:00
         - original version

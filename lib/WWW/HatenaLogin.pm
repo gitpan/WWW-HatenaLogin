@@ -7,7 +7,7 @@ use Carp;
 use URI;
 use WWW::Mechanize;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 my $login_uri  = 'https://www.hatena.ne.jp/login';
 my $logout_uri = 'https://www.hatena.ne.jp/logout';
@@ -63,14 +63,32 @@ sub has_metalink {
 
 sub is_loggedin {
     my $self = shift;
-    $self->{mech}->get($self->{uri}->{login});
+    $self->{mech}->get($self->login_uri);
     $self->has_metalink;
 }
 
-sub login {
-    my $self = shift;
+sub login_uri { shift->{uri}->{login} }
 
-    $self->{mech}->get($self->{uri}->{login});
+sub logout_uri { shift->{uri}->{logout} }
+
+sub username {
+    my $self = shift;
+    $self->{username} = defined $_[0] ? $_[0] : $self->{username};
+}
+
+sub login {
+    my($self, $args) = @_;
+
+    if ($args) {
+        if ($args->{username}) {
+            $self->{username} = $args->{username};
+        }
+        if ($args->{password}) {
+            $self->{password} = $args->{password};
+        }
+    }
+
+    $self->{mech}->get($self->login_uri);
     $self->{mech}->submit_form(
         fields => {
             $self->{login_form}->{username} => $self->{username},
@@ -84,7 +102,7 @@ sub login {
 
 sub logout {
     my $self = shift;
-    $self->{mech}->get($self->{uri}->{logout});
+    $self->{mech}->get($self->logout_uri);
     $self->{logout_check} ? $self->{logout_check}->($self) : $self->has_metalink;
 }
 
@@ -231,15 +249,19 @@ Checks if C<$session> object already logs in to Hatena.
 
 =back
 
-=head2 login ()
+=head2 login ( [I<\%args>] )
 
 =over 4
 
-  $session->login;
+  $diary->login({
+      username => $username,
+      password => $password,
+  });
 
-Login to Hatena.
-username and password which are passed into C<new> method above will be used. 
-
+Logs in to Hatena::Diary using C<username> and C<password>. If either
+C<username> or C<password> isn't passed into this method, the values
+which are passed into C<new> method above will be used.
+ 
 =back
 
 =head2 logout ()
@@ -281,6 +303,37 @@ this method same to $session->mech->cookie_jar;
 
 return to session id.
 key in cookie is a value of rk. 
+
+=back
+
+=head2 login_uri ()
+
+=over 4
+
+  $session->login_uri;
+
+return to login uri.
+
+=back
+
+=head2 logout_uri ()
+
+=over 4
+
+  $session->logout_uri;
+
+return to logout uri.
+
+=back
+
+=head2 username ('username')
+
+=over 4
+
+  $session->username;
+  $session->username('new_username');
+
+username accessor
 
 =back
 
