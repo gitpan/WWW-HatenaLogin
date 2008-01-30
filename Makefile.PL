@@ -3,6 +3,7 @@ name 'WWW-HatenaLogin';
 all_from 'lib/WWW/HatenaLogin.pm';
 
 requires $_ for (qw/
+    Crypt::SSLeay
     URI
     WWW::Mechanize
 /);

@@ -7,7 +7,7 @@ use Carp;
 use URI;
 use WWW::Mechanize;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 my $login_uri  = 'https://www.hatena.ne.jp/login';
 my $logout_uri = 'https://www.hatena.ne.jp/logout';
@@ -284,7 +284,7 @@ return to L<WWW::Mechanize> object.
 
 =back
 
-=head2 mech ()
+=head2 cookie_jar ()
 
 =over 4
 
